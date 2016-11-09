@@ -64,12 +64,36 @@ export const getArticleDetail=(id)=>{
             .then((json,status)=>{
                 let isLike=false;
                 let article=json.data;
-
+                if(auth.user){
+                    auth.user.likes.map(item=>{
+                        if(item.toString()===article._id){
+                            isLike=true
+                        }
+                    })
+                }
+                return dispatch({
+                    type:types.ARTICLE_DETAIL_SUCCESS,
+                    articleDetail:{...article,isLike:isLike}
+                })
+            })
+            .catch(error=>{
+                return dispatch({
+                    type:types.ARTICLE_DETAIL_FAILURE
+                })
             })
     }
 };
 
-
+// 获取上一篇文章
+export const getPrenext=(id)=>{
+    return (dispatch,getState)=>{
+        const options=getState().options.toJS();
+        return dispatch({
+            type:types.PRENEXT_ARTICLE,
+            promise:api.getPrenext(id,options)
+        })
+    }
+};
 
 
 
