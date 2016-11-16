@@ -14,12 +14,100 @@
 
 You've alraedy learned how to display data with React.Now let's look at
 
+(SEVEN)、Multiple Components
 
+动机：创建有良好定义的接口利用别的组件的模块组件，你可以获得像用函数和类一样的好处。只需要简单的创建新的组件，你就可以明显的把你的app的关注点分散开来。为你的app创建一套定制的组件库，你可以用最适合你的领域的方式表达你的UI。
 
+var Avatar =React.createClass({
+	render:
+})
 
+所有权关系：
 
+this.props.children 是一个不透明的数据结构，使用React.Children工具操作他们。
 
+调谐是React用新的render传递更新DOM的过程，通常，子类根据渲染时的顺序更新
 
+??Child Reconciliation
+??Stateful Children
+
+Dynamic Component
+
+key应在容器中赋值，而不是在组件内部赋值
+
+数据流：从所有者到被拥有者
+单向数据绑定，有效率，递归，数据绑定反应在所有被用到的地方
+
+性能提示：
+
+你可能觉得如果一个组件拥有很多子组件，改变数据会很消耗，但是，JS很快，而且render函数一般很简单，在大多数应用中这是很快的。而且，瓶颈常常是DOM更新，而不是JS执行。React会凭借批量更新和更新检测来为你优化这点。
+然而，有时，你真的想对你的性能有更好的控制。这种情况，简单的重写shouldComponentUpdate()并返回false，当你希望React跳过一个支树的进行。
+当shouldComponent返回false，React将不能保存你的UI同步。在这样做的时候，请确定你知道你在做神马，只在你有突出的性能问题是使用这个函数。不要低估JS相对于DOM的速度。
+
+(EIGHT)、Reusable Component
+
+当设计接口时，拆解常用的设计元素成有良好定义接口的可重用的组件。这样，下次你需要创建一些UI，你可以少写很多代码。这意味着更快的开发时间，更少的BUG，和更好的字节。
+
+Prop Validation
+（属性验证）
+
+React.PropTypes暴露了很多验证方法可以用来保证你收到的数据是有效的，当一个无效的数据被提供给一个prop，控制台会打出一个警告，出于性能的考虑，propTypes只在开发模式时被检查。
+
+单个子组件
+
+默认属性值：
+getDefaultProps()的结果会被缓存并被用来保证属性有一个值，如果没在父组件中被指定
+。这允许你可以安全的使用你的属性，而不需要你自己用重复的零碎的代码来控制。
+
+传递属性：捷径
+
+混合：
+解决有时很不同的组件的共享相同的方法
+
+ES6 类
+
+class XXX extends React.Component{
+	
+}
+
+这样定义组件与React.createClass的不同点是：
+没有getInitialState方法，但是可以在构造方法constructor中设置
+propTypes和defaultProps作为属性在constructor中被定义，而不是在class内
+
+NoAutobinding 没有自动绑定
+
+跟随ES6来的语义方法，意味着它们不会自动给实例绑定this，你必须明确地使用.bind(this)或者箭头函数。
+
+我们推荐你在constructor中绑定事件处理句柄，这样它们只为每个实例绑定一次。
+这样性能更好，尤其是如果你实现了shouldComponentUpdate方法，
+
+ES6不能支持mixin
+
+无状态方法
+普通JS写法
+这样的写法不能保持internal state，没有后退实例，没有生命周期方法。它们是简单的方法传递。
+然后它们可以指定属性类型和默认属性值
+
+(Nine)、传递属性值
+
+属性合并
+more Object.assign()
+
+手动传递
+
+在JSX中用...传递
+解构语法
+这样保证了你传递了所有属性，除了你自己消费的
+
+消费和传递同样的属性
+
+剩余传播属性
+
+如果不用JSX，可以用JS库来实现一样的功能，比如Underscore
+_.omit过滤属性
+_.extend复制属性到新的对象
+
+(TEn)、Forms
 
 
 
