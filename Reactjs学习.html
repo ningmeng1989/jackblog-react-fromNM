@@ -107,30 +107,92 @@ more Object.assign()
 _.omit过滤属性
 _.extend复制属性到新的对象
 
-(TEn)、Forms
+(TEN)、Forms
+
+表单组件可以通过用户交互改变值
+交互属性：
+value
+checked
+selected
+
+受控组件：
+getInitialState
+handleChange
+render
+
+不受控组件：
+defaultValue
+
+defaultChecked
+defaultValue
+
+进阶
+node.getAttribute('value')
+
+Textarea Value
+--当用value的时候，不应该用子节点
+
+必要的操作：
+如果你必须要执行一个操作，你必须保持一个对节点的指向，因此，如果，你必须提交一个表单，有一种方法就是，获得一个from元素的指向，然后手动触发表单提交方法。
+
+(ELEVEN)、Working With the Browser
+
+React提供了一个强大的抽象，让你在大多数情况下可以不用直接操作DOM元素，但是，有时，你需要用到已有的API，可能是用一个第三方库，或者已存在的代码。
+
+【1】、The Virtual DOM
+
+React非常快，因为它不直接操作DOM，React维护了一个快速的DOM缓存代表。render方法实际上会返回一个DOM陈述，然后，React可以和缓存中的陈述比较来计算出最快的方法来更新浏览器上的DOM。
+
+并且，React实现了一整套合成事件系统，这样所有事件对象可以保证遵守W3C的规则，而不管浏览器的差异，所有东西在各浏览器中，冒泡一致并且高效。你甚至可以使用HTML5的事件在老的平常不支持这些事件的浏览器中。
+
+大部分时候，你应该呆在React的假的浏览器的世界里，因为这性能更好，更简单。然而，有时，你要和已有的API打交道，可能是用一个第三方库，例如jQuery。React为你提供了逃生舱来直接使用这些已有的DOM API。
+
+【2】、Refs and findDOMNode()
+
+要和浏览器交互，你需要一个DOM节点的引用，你可以给任何元素添加ref，这让你可以引用组件的支持实例。如果你想调用这个组件上的必要的方法，或者想和已有的DOM节点打交道，这会很有用。要深入了解refs，包括如何高效地使用它们的方法，可以看refs to components这篇文章。
+
+【3】、组件声明周期：
+
+组件的生命周期可以分为三个主要部分：
+
+React提供了生命周期方法让你可以在过程中指定钩子函数。我们提供will方法-当某个事件正要发生时触发，以及did方法-当某个事件刚刚发生了的时候触发。
+
+1.Mounting-一个组件被插入DOM
+
+	getInitialState--当组件被插入DOM之前触发，有状态的组件可以实现这个方法，并且返回初始值；
+
+	componentWillMount--当插入正要发生时触发；
+
+	componentDidMount--当插入刚刚完成使触发，那些需要DOM节点的初始化方法应该放在这里。
+
+2.Updating-一个组件被重新渲染来决定DOM是否要更新
+
+	componentWillReceiveProps（object nexrProps）--当一个已插入到DOM中的组件获得新的属性时触发。这个方法应该用来比较this.props和nextProps，然后用this.setState()方法来完成状态改变；
+
+	shouldComponentUpdate(object nextProps,object nextState)--布尔值被调用，当一个组件决定是否任何改变要保证DOM的更新。使用这个方法是一个优化，当来比较this.props和nextProps this.state和nextState，并且返回false，如果React要跳过更新。
+
+	componentWillUpdate(object nextProps,object nextState)--当DOM更新正要发生时被调用，在这里你不能使用setState方法；
+
+	componentDidUpdate(object prevProp,object prevState)--当DOM更新刚刚完成时时被调用。
 
 
+3.Unmounting-一个组件被从DOM中移除
 
+	componentWillUnmount()--当一个组件被移除并且被销毁时调用，清除方法应该放在这里。
 
+【4】、Mounted Methods
 
+插入复合组件还支持这个方法
 
+component.forceUpdate()--对任何已被装载的组件，当这个组件有某些更深层的方面已经改变，而不是用this.setState方法改变的。
 
+【5】、浏览器支持
 
+React支持ie9以上，大部分常用浏览器，不支持那些不支持ES5方法的老浏览器，但是你可以在页面中用es5-shim 和es5-sham 来填充。
 
+(TWELVE)、Refs to Components
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+当你创建你的组件时，你可能会发现自己想要跳出来，调用render函数返回的组件实例上的方法。
 
 
 
