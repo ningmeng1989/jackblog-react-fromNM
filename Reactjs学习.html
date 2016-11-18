@@ -195,13 +195,364 @@ React支持ie9以上，大部分常用浏览器，不支持那些不支持ES5方
 当你创建你的组件时，你可能会发现自己想要跳出来，调用render函数返回的组件实例上的方法。
 
 
+-----API 指南------
+
+（一）、Top-level API
+
+React是React库的入口点，如果你正在使用一个预编译包，这是一个可访问的全局变量，如果你在使用CommonJS，你可以require它。
+
+【1】、React
+
+1、React.Component
+
+class Component
+
+这是React组件的基础类，当用ES6的class定义的话，
+
+2、React.createClass
+
+ReactClass createClass(object specification)
+
+创建一个组件类，实现一个render方法返回一个单个的子元素，这个子元素可能有自己的深层的子组件结构。组件不同于标准原型类的一点是，你不需要在他们上调用new方法。他们是方便的包装为你组织后台实例。
+
+3、React.createElement
+
+ReactElement createElement(
+	string/ReactClass type,
+	[object props],
+	[children...]
+)
+
+用给定的类型创建返回一个新的React元素，这个type参数可以是一个html标签名，或者一个React类。
+
+4、React.cloneElement
+
+ReactElement cloneElement(
+	ReactElement element,
+	[object props],
+	[children...]
+)
+
+用element作为入口点复制并返回一个新的React元素，新产生的元素将拥有源元素的属性和新的属性，新的子元素会替换已有的子元素，不像React.addons.cloneWithProps,原元素上的key和ref会被保留。合并任何属性没有不同的行为。
+
+5、React.createFactory
+
+factoryFunction createFactory(
+	string/ReactClass type
+)
+
+返回一个用给定类型产生React元素的函数，type也可以是html标签名或者一个React类。
+
+6、React.isValidElement
+
+证实这个对象是不是React元素。
+
+7、React.DOM
+
+React.DOM会提供方便的包装包住React.createElement为DOM组件，这只应该在不用JSX的时候使用，例如：React.DOM.div(null,'Hello World!')
+
+8、React.PropTypes
+
+React.PropTypes包含可以用于组件属性类型对象的类型用来验证传递给你的组件的属性。
+
+9、React.Children
+
+React.Children提供了处理this.props.children这种不透明的数据结构的使用工具。
+
+.map
+array React.Children.map(object children,function fn[,object thisArg])
+在每一个直接后代上调用fn，返回数组
+
+.forEach
+React.Children.forEach(object children,function fn [,object thisArg])
+在每一个直接后代上调用fn，但是不返回数组
+
+.count
+number React.Children.count(object children)
+返回子组件的数量
+
+.only
+object React.Children.only(object children)
+返回后代中的唯一元素
+
+React.Children.toArray
+array React.Children.toArray(object children)
+用一个普通的数组返回后代不透明的数据结构，用key分配给每个子元素。这是很有用的，如果你想保持你render函数的后代集合，特别是当你想重新排序或者切开this.props.children在传递下去之前。
+React.Children.toArray()会改变key来防止嵌套数组的语义，当把后代列表弄平，toArray方法会为每个返回的数组添加前缀，这样，每个元素的key在包含它的输入数组范围内。
+
+【2】、ReactDOM
+
+react-dom包提供了dom特定的方法可以用在你app的顶级，并且可以作为你想跳出React模式的解决方法。大多数你的组件不应该使用这个模块。
+
+1、ReactDOM.render
+
+render(
+	ReactElement element,
+	DOMElement container,
+	[function callback]
+)
+
+渲染一个容器内的React元素成DOM，并且返回一个这个组件的引用。
+如果这个react元素已经被预渲染，这会表现为一次升级并且只按必要改变DOM来反映最后的React组件。
+如果有回调函数，在组件被渲染或者升级后会被执行。
+
+记住：
+ReactDOM.render方法控制容器节点内的所有内容，任何存在的DOM元素在第一次调用时会被替换，之后的调用会根据DOM的区别进行高效的更新。
+不改变容器节点，未来可能会插入一个组件到一个已有的DOM节点而不用覆盖已存在的子元素。
+这个方法先在会返回一个根React元素实例的引用，然而，应避免使用这个值，因为未来的版本，React可能会异步渲染组件。如果你需要一个根react组件实例的引用，更好的解决方法是增加一个回调方法在根元素上。
+
+2.ReactDOM.unmountComponentAtNode
+
+移除一个已装载到DOM节点上的React组件，然后清除它的事件处理和状态。如果这个节点上没有React组件，调用这个方法则什么都不做，true表示成功，false表示没有组件可以移除。
+
+3.ReactDOM.findDOMNode
+
+DOMElement findDOMNode(ReactComponent component)
+
+如果这个组件已经被装载到DOM节点上，这个方法会返回相应的原生浏览器DOM原生。这个方法在从DOM上读取数值，例如表单元素值和处理DOM大小，大多数时候，你可以给DOM节点添加一个ref，然后避免使用findDOMNode方法。当render方法返回null或者false，findDOMNode会返回null
+findDOMNode是被用于跟已有DOM节点打交道的方法，大多数情况下，这个做是不鼓励的，因为这刺穿了组件抽象。
+这个方法只用在已被装载的组件上，不然会报出异常。也不能用于无状态组件。
+
+【3】、ReactDOMServer
+
+ReactDOMServer包允许你在服务器上渲染你的组件
+
+1.ReactDOMServer.renderToString
+
+渲染一个react元素成它初始化HTML，这应该用在服务器端，React会返回一个HTML字符串，你可以用这个方法来在服务器上生成HTML，然后在初始化响应的时候发送给客户端，用来加快页面加载，以及让爬虫抓取你的页面以达到搜索引擎优化。
+如果在已经有服务器端喧嚷的组件上用render函数，这会被取消而值附加事件处理函数，让你有一个很好的首次加载体验。
+
+2.ReactDOMServer.renderToStaticMarkup
+
+类似于renderToString，除了不创建额外的DOM属性，例如sata-react-id这种react内部使用的属性。当你想把react用成一个静态页面是这很有用，因为这样跳过额外的属性可以节省字节码。
 
 
+（二）、Component API 
+
+React.Component
+
+当渲染的时候，React内部会创建一个React组件实例，这些实例在后续的渲染中会被重用，并且在你的组件方法内可以用this引用。要在React外部获得组件的操作，唯一方法就是保持ReactDOM的返回值。在别的组件中，你可以使用refs来获得相同的结果。
+
+【1】、setState
+
+void setState(
+	function|object nextState,
+	[function callback]
+)
+
+执行一次下个状态到现有状态的浅合并，这是你从时间处理和服务器响应回调中触发UI更新的主要方法。
+第一个参数可以是一个对象或者一个返回包含要更新内容的对象。
+也有可能是一个有签名函数的函数，当你想入队一个不可分割的更新，需要根据前一个state和props值的计算设置任何值，
+
+第二个参数是一个在setsta完成和组件重新渲染后执行的方法。
+
+不应该直接改变this.state，而应该调用setState，同步操作无保证，shouldComponentUpdate方法会可以组织重新渲染
+
+【2】、repalceState
+
+类似于setState，但是会删除所有之前存在而下一个state不存在的key。
+
+【3】、forceUpdate
+
+强制重新渲染，跳过shouldComponentUpdate
+-当数据对象层级过深，或依赖一些别的数据
+
+为子组件触发正常的生命周期方法，包括shouldComponentUpdate
+
+一般情况下，应该避免使用这个方法，而从this.props和this.state中读数据
+
+【4】、isMounted
+
+检查一个组件是否已装载到DOM节点上，可以用这个方法检查异步方法来重新渲染。
+
+在ES6中，这个方法无效
+
+（三）、Component Spaces and LifeCycle
+
+组件说明
+
+当调用React.createClass()创建一个组建的时候，你应该提供一个说明对象，包含render方法，并可以可选的包含其他这里定义的生命周期方法。
+
+也可以用普通的JS类实现组件类，这些类可以实现大部分同样的方法，虽然有些不同。
+
+【1】、render
+
+这个方法是必须的。
+当调用时，它会去检查props和state，然后返回一个单个的子元素，这个子元素可以是原生DOM组件的虚拟代表，也可以是另一个你自己定义的复合组件。
+也可以返回null或false，表示不渲染任何东西，这样react会渲染一个noscript用于我们现在的差别算法，这样ReactDOM.findDOMNode会返回null。
+这个方法应该是纯的，不应该改变组件状态，每次调用应该返回相同的结果，不应该对DOM读写，跟浏览器交互。这些操作应该放在componentDidMount里，保存render方法纯可以使服务器渲染更实用，让组件更容易理解。
+
+【2】、getInitialState
+
+在组件被装载之前调用一次，返回值被用于state的初始值。
+
+【3】、getDefaultProps
+
+当类创建的时候调用一次并缓存下来，如果this.props没在父组件中指定，这里面的值将被实用。
+
+这个方法在任何势力被创建之前被调用，这样不能依赖this.props，这个方法返回的任何复杂对象在这个实例中会被共享，而不是复制。
+
+【4】、propTypes
+
+属性类型允许你在属性被传递给你的组件前验证。
+
+【5】、mixins
+
+混合数组允许你在多个组件中共享行为
+
+【6】、statics
+
+允许你在组件类上定义静态方法
+
+方法定义在这个块里，意味着你可以在任何组件实例被创建前调用，这个方法不和props或state打交道，如果你想在静态方法中检查这个值，在静态方法中作为参数传进去。
+
+【7】、displayName
+
+displayName用于调试
+
+【8】、生命周期方法
+
+componentWillMount
+componentDidMount
+componentWillReceiveProps
+shouldComponentUpdate
+componentWillUpdate
+componentDidUpdate
+componentWillUnmount
+
+（四）、Tags AND Attributes
+
+HTML和SVG标签
+
+a abbr address area article aside audio a base bdi bdo big blockquote bodu br button canvas caption cite code col golgroup data datalist dd del detail dfn dialog div dl dt em embed fieldset figcaption figure footer form h1 h2 h3 h4 h5 
+
+支持的属性
+
+data-*  aria-*
+
+所有属性是驼峰法 class-className  for-htmlFor
+
+一些RDFa属性也被支持
+一些非标准属性也被支持
+
+dangerouslySetInnerHTML
+suppressContentEditableWarning
+
+（五）、事件系统
+
+【1】、合成事件
+
+你的事件处理被传递,合成事件实例，一个在浏览器原生事件包装的跨浏览器的合成事件，和浏览器原生事件有一样的接口，包括stopPropagation和preventDefault，除了在所有浏览器中表现一致。
+
+如果你想用原生事件的方法，只要用原生事件属性，每个合成事件对象有一下属性：
+
+boolean bubbles
+boolean cancelbale
+DOMEventTarget currentTarge
+boolean defaultPrevented
+number eventPhase
+boolean isTrusted
+DOMEvent nativeEvent
+void preventDefault
+boolean isDefaultPrevented
+void stopPropagation
+boolean isPropagationStopped
+DOMEventTarget target
+number timestamp
+string type
+
+【2】、事件池
+
+合成事件被积聚，这意味着合成事件对象会被重复利用，在事件被调用后，所有属性会被废弃，这样，你不能在异步方法中用事件。
+
+如果想在异步方法中用事件属性，可以用event.presist方法，保留事件在用户代码中，从池中移除事件。
+
+【3】、支持的事件
+
+React事件在所有浏览器中一致，在冒泡阶段执行，如果要在捕获阶段执行，加Capture在事件名后面。
 
 
+onCopy onCut onPaste
 
+（六）、DOM Differences
+ 
+ 出于浏览器兼容性方面的考虑，React实现了一个相对浏览器独立的事件和DOM系统，我们有机会清除一些在浏览器DOM实现上难过的坎。
 
+ 1.DOM属性驼峰法
+ 2.style属性脱粉广发
+ 3.className htmlFor
+ 4.事件符合W3C规则
+ 5.onchange改变即触发
+ 6.value checked
 
+ （七）、Special Non-DOM Attribute
+
+ 1.key
+可选的唯一标识，当组件洗牌时可能被销毁然后重新创建，根据差异法则。 
+分配一个key保持组件存在
+
+2.ref
+
+3.dangerouslySetInnerHTML
+插入元素HTML。主要为DOM字符串操作库。
+
+（八）、Reconciliation
+
+React的key设计的决心是为了使API看起来每次更新都是重新渲染整个app,这让写一个app更简单，但这也是一个巨大的挑战来使它好管理。这篇文章解释了我们是如何用一个探索算法使一个多维问题变成一个一维问题。
+
+两个假设：
+1.一个类生成的两个组件有相似的树，不同的类生成的组件生成的树不同
+2.
+
+（九）、Web Component
+
+React和WebComponent是互补的
+
+（十）、React DOM 术语
+
+有5个核心类型要区分
+
+1.ReactElements
+
+React中的主要类型，有4个属性，type，props，key，ref
+
+2.ReactElement Factory
+
+3.ReactNode
+
+4.ReactComponent
+
+5.ReactComponent Class
+
+------小提示------
+
+（一）、行内样式
+
+在React中，行内样式是一个对象，而不是一个字符串
+
+var divStyle={
+	color:'white',
+	backgroundImage:'url('+imgUrl+')',
+	WebkitTransition
+}
+
+Wekit、Ms
+
+（二）、If-Else in JSX
+
+ReactDOM.render(<div id={condition?'msg':null}></div>,mountNode)
+
+如果三元表达式不够用，应该在JSX外使用if else
+
+如果你最喜欢行内的，可以用一个立即执行行数
+
+（三）、自闭和标签
+
+所有元素必须闭合，用自闭合或者配合闭合
+
+（四）、最大JSX根节点数量
+
+render方法内只能返回一个节点
 
 
 
