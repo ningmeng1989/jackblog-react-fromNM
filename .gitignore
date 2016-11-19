@@ -10,15 +10,8 @@ npm-debug.log*
 .DS_Store
 .idea
 node_modules
+DOC
+
 #dist
 
-##push server
-#/*
-#!/dist
-#!server.js
-#!/logs
-#!package.json
-#!process.json
-#*.log
-#*.pid
-.idea
+

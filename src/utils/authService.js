@@ -1,41 +1,38 @@
-/**
- * Created by JIANBO on 2016/11/10.
- */
 import cookie from 'react-cookie'
-import {CookieDomain} from '../config'
-let cookieConfig={};
-if(CookieDomain!==''){
-    cookieConfig={domain:CookieDomain}
+import { CookieDomain } from '../config'
+let cookieConfig = {}
+if(CookieDomain !== ''){
+  cookieConfig = { domain: CookieDomain }
 }
 
 export function saveCookie(name,value) {
-    cookie.save(name,value,cookieConfig)
+  cookie.save(name, value, cookieConfig)
 }
 
 export function getCookie(name) {
-    return cooke.load(name)
+  return cookie.load(name)
 }
 
 export function removeCookie(name) {
-    cookie.remove(name,cookieConfig)
+  cookie.remove(name, cookieConfig)
 }
 
 export function signOut() {
-    cookie.remove('token',cookieConfig);
+  cookie.remove('token', cookieConfig)
 }
 
 export function isLogin() {
-    return !!cookie.load('token');
+  return !!cookie.load('token')
 }
 
-export function redirectToBack(nextState,replaceState) {
-    if(isLogin()){
-        replaceState(null,'/');
-    }
+export function redirectToBack(nextState, replaceState) {
+  //已经登录则不进入
+  if (isLogin()) {
+    replaceState(null, '/')
+  }
 }
-
-export function redirectToLogin(nextStete,replaceState) {
-    if(!isLogin()){
-        replaceState(null,'/login')
-    }
+export function redirectToLogin(nextState,replaceState) {
+  if (!isLogin()) {
+    replaceState(null, '/login')
+  }
 }

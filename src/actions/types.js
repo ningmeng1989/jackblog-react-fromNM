@@ -1,9 +1,3 @@
-/**
- * Created by JIANBO on 2016/11/7.
- */
-/**
- * Created by JIANBO on 2016/11/7.
- */
 export const CHANGE_STYLE_MODE= 'CHANGE_STYLE_MODE'
 
 export const CHANGE_OPTIONS = 'CHANGE_OPTIONS'

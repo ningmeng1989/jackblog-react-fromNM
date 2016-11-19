@@ -1,11 +1,8 @@
-/**
- * Created by JIANBO on 2016/11/10.
- */
-import {GET_APPS_SUCCESS,GET_APPS_FAILURE} from '../actions/types'
-import {createReducer} from 'redux-immutablejs'
+import { GET_APPS_SUCCESS,GET_APPS_FAILURE } from '../actions/types'
+import { createReducer } from 'redux-immutablejs'
 import {List} from 'immutable'
 
-export default createReducer(List(),{
-    [GET_APPS_FAILURE]:(state,action)=>state,
-    [GET_APPS_SUCCESS]:(state,{json})=>state.merge(json.data)
+export default createReducer(List(), {
+  [GET_APPS_FAILURE]: (state, action) => state,
+  [GET_APPS_SUCCESS]: (state,{json}) => state.merge(json.data)
 })
